@@ -1,0 +1,145 @@
+<%@LANGUAGE="VBSCRIPT" CODEPAGE="65001"%>
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<title>DG Referral System </title>
+<link href="RSTest.css" rel="stylesheet" type="text/css" />
+<!-- #include file = "includes/opencon.asp" -->
+<!-- #include file = "includes/adovbs.asp" -->
+<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+</head>
+
+<body>
+
+<div class="container">
+  <header>
+    <a href="#"><img src="" alt="Insert Logo Here" width="180" height="90" id="Insert_logo" style="background: #C6D580; display:block;" /></a>
+  </header>
+  <div class="sidebar1">
+    <nav>
+      <ul>
+        <li><a href="#">Link one</a></li>
+        <li><a href="#">Link two</a></li>
+        <li><a href="#">Link three</a></li>
+        <li><a href="#">Link four</a></li>
+      </ul>
+    </nav>
+    <aside>
+      <p></p> 
+    </aside>
+  <!-- end .sidebar1 --></div>
+  <div class="content">
+    <h1>Welcome to the Coeur d'Alene Area Referral System</h1>
+    <section>
+     <h2>Instruction:</h2>
+      <p>From the list of Coeur d'Alene zip codes below, Click on the circle next to the zipcode you live in or where the service you are seeking will be needed.  Then click on the type of service you are looking for.</p>
+    </section>
+    <section>
+    	
+    <%
+		vDoWhat = "A"  '  This gets all the zipcodes
+		vID_Zipcode = 0		'  Not used here
+		vID_Client = 0		'  Not used here
+				
+		Set cmd = Server.CreateObject("ADODB.Command")
+		Set cmd.ActiveConnection = con
+	
+		cmd.CommandText = "GetZips"
+		cmd.CommandType = 4   'adCmdStoredProcedure
+		cmd.Parameters.Append cmd.CreateParameter("vDoWhat", adChar, adParamInput, 1, vDoWhat)
+		cmd.Parameters.Append cmd.CreateParameter("vID_Zipcode", adInteger, adParamInput, , vID_ZipCode)
+		cmd.Parameters.Append cmd.CreateParameter("vID_Client", adInteger, adParamInput, , vID_Client)   
+        
+		Set rsZipCodes = cmd.execute
+        If rsZipCodes.eof Then
+			'  Problem no records came back
+		end if
+		
+        Set cmd = Nothing
+		
+		vDoWhat = "A"  '  This gets all the zipcodes
+		vID_Category = 0		'  Not used here
+		vID_Client = 0		'  Not used here
+				
+		Set cmd = Server.CreateObject("ADODB.Command")
+		Set cmd.ActiveConnection = con
+	
+		cmd.CommandText = "GetCats"
+		cmd.CommandType = 4   'adCmdStoredProcedure
+		cmd.Parameters.Append cmd.CreateParameter("vDoWhat", adChar, adParamInput, 1, vDoWhat)
+		cmd.Parameters.Append cmd.CreateParameter("vID_Category", adInteger, adParamInput, , vID_Category)
+		cmd.Parameters.Append cmd.CreateParameter("vID_Client", adInteger, adParamInput, , vID_Client)   
+        
+		Set rsCategories = cmd.execute
+        If rsCategories.eof Then
+			'  Problem no records came back
+		end if
+		
+        Set cmd = Nothing	
+     %>
+     	<Table width="80%" align="center">
+        	<tr>
+            	<td width="30%" >
+     				<h3>Zip Codes</h3>
+				</td>
+                <td width="70%" >
+     				<h3>Service Categories</h3>
+                </td>
+          </tr>
+          <tr>
+          		<td>
+                  <form Name="SelectZipCat" method="post" action="DispBC.asp"  >
+                  
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<select name="zipcode" >
+                  <%
+                  Do While Not rsZipCodes.eof 
+                    vZipCode = rsZipCodes("ZipCode")
+                    vZipID = rsZipCodes("ID_ZipCode")
+                    %>
+                   <option value="<%=vZipID%>" ><%=vZipCode%> </option>
+                    <%
+                    rsZipCodes.movenext
+                Loop
+                %>
+                </select>
+             </td>
+             <td>
+             	  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<select name="Categories" >
+                  <%
+                  Do While Not rsCategories.eof 
+                    vCat = rsCategories("Description")
+                    vCatID = rsCategories("ID_Category")
+                    %>
+                  <option value="<%=vCatID%>" ><%=vCat%> </option>
+                    <%
+                    rsCategories.movenext
+                Loop
+                %>
+                </select>
+             </td>
+         </tr>
+          </tr>
+         <tr>
+         	<td colspan="2">
+            	&nbsp;
+         	</td>
+        </tr>
+         <tr>
+         	<td colspan="2">
+            	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="submit" name="GetReferral" value="Display Recommended Providers"  />
+         	</td>
+        </tr>
+    </form>
+    </table>
+    </section>
+    </div>
+  <footer>
+    <p>This footer contains the declaration position:relative; to give Internet Explorer 6 hasLayout for the footer and cause it to clear correctly. If you're not required to support IE6, you may remove it.</p>
+    <address>
+      Address Content
+    </address>
+  </footer>
+  <!-- end .container --></div>
+</body>
+</html>
